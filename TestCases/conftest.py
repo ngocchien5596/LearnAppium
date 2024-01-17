@@ -2,7 +2,7 @@ import pytest
 from selenium.webdriver.common.by import By
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
-
+appID = "com.betterwell.reset"
 @pytest.fixture
 def setup() -> None:
     appium_url = 'http://localhost:4723/wd/hub'
