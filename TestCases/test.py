@@ -3,41 +3,42 @@ import unittest
 from selenium.webdriver.common.by import By
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
+from PageObjects.LoginPage import LoginPage
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from TestCases.conftest import setup
 
-class AppiumTest(unittest.TestCase):
+class TestLogin:
 
     appID = "com.betterwell.reset"
-    def test_example(self):
-
-        desired_caps = {
-            'platformName': 'Android',  # or 'iOS'
-            'platformVersion': '13',
-            'deviceName': 'RF8R60PF4NL',
-            'appPackage': 'com.betterwell.reset',
-            'appActivity': 'com.betterwell.reset.MainActivity',
-            'automationName': 'UiAutomator2',  # or 'XCUITest' for iOS
-            'app': '/Users/ngocchien/Downloads/app-release.apk'
-        }
+    email = "fevex98244@weirby.com"
+    pwd = "Aa@123123"
 
 
-        # Appium server URL
-        appium_url = 'http://localhost:4723/wd/hub'
-        options = UiAutomator2Options().load_capabilities(desired_caps)
+    def test_example(self, setup):
 
-        # Initialize the Appium driver
-        self.driver = webdriver.Remote(appium_url, options=options)
+        self.driver = setup
 
-        self.driver.find_element(By.XPATH, "//android.widget.ScrollView/android.view.ViewGroup/android.widget.EditText").send_keys("fevex98244@weirby.com")
-        time.sleep(0.5)
-        self.driver.find_element(By.XPATH,"""//android.widget.EditText[@resource-id="RNE__Input__text-input"]""").send_keys("Aa@123123")
-        time.sleep(0.5)
-        self.driver.find_element(By.XPATH, "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup").click()
-        time.sleep(0.5)
-        self.driver.find_element(By.XPATH, """//android.widget.TextView[@text="Log In"]""").click()
-        time.sleep(5)
+        # Login functions usage
+        self.lp = LoginPage(self.driver)
 
-        resetLabel = self.driver.find_element(By.XPATH, """//android.widget.TextView[@text="Reset"]""")
-        if resetLabel:
+        # Fill email
+        self.lp.setEmail(self.email)
+
+        # Fill password
+        self.lp.setPW(self.pwd)
+
+        # Check agreement terms
+        self.lp.tapAgrement()
+
+        # Tap login button
+        self.lp.tapLogin()
+
+        # Wait for reset label to be displayed
+        resetLabel_xpath =  """//android.widget.TextView[@text="Reset"]"""
+        element = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, resetLabel_xpath)))
+
+        if element:
             assert True
             self.driver.terminate_app(self.appID)
         else:
